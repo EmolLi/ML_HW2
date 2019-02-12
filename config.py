@@ -12,3 +12,4 @@ test_data_path = data_path + "test.json"
 train_data_path = data_path + "train.json"
 dev_data_path = data_path + "dev.json"
 
+output_csv_path = os.path.dirname(__file__) + "/output.csv"

@@ -10,6 +10,7 @@ from sklearn import metrics
 import numpy as np
 from sklearn.model_selection import KFold
 import csv
+from src.classifiers import decision_tree_classifier, logistic_regression
 
 kFold_n = 8
 
@@ -69,13 +70,17 @@ def experiment(pipeline, classifier, model_name, X_train, Y_train, X_test, Y_tes
     print(metrics.classification_report(Y_test, Y_pred,
                                             target_names=["Negative", "Positive"]))
     f1 = metrics.f1_score(Y_test, Y_pred, average=None)[1]
+    # Z_pred = model.predict(Z)
     return [f1, Y_pred, model]
 
 
 def experiment_basic_validation():
     [X_train, Y_train, X_test, Y_test] = split_data(data)
-    experiment(tfidf_pipeline, ('clf', MultinomialNB()), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
+    # experiment(tfidf_pipeline, ('clf', MultinomialNB()), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
     # experiment(binary_occurrences_pipeline, ('clf', MultinomialNB()), "mnb+binary", X_train, Y_train, X_test, Y_test)
+    # experiment(tfidf_pipeline, ('dtc', decision_tree_classifier), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
+    [f1, Y_pred, model] = experiment(tfidf_pipeline, ('lr', logistic_regression), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
+    # model.predict(test_data['data'])
 
 
 def experiment_k_fold():
@@ -83,6 +88,7 @@ def experiment_k_fold():
     best_Y_pred = []
     best_test_index = []
     best_model = None
+    result = None
     kf = KFold(n_splits=kFold_n, random_state=None, shuffle=True)
     for train_index, test_index in kf.split(data['data']):
         print("TRAIN:", train_index, "TEST:", test_index)
@@ -90,18 +96,23 @@ def experiment_k_fold():
         X_test = [data['data'][i] for i in test_index]
         Y_train = [data['target'][i] for i in train_index]
         Y_test = [data['target'][i] for i in test_index]
-        [f1, Y_pred, model] = experiment(tfidf_pipeline, ('clf', MultinomialNB()), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
+        [f1, Y_pred, model] = experiment(tfidf_pipeline, ('lr', logistic_regression), "mnb+tfidf", X_train, Y_train, X_test, Y_test)
+        pred = model.predict(test_data['data'])
         if (f1 > best_f1):
             best_f1 = f1
             best_Y_pred = Y_pred
             best_test_index = test_index
             best_model = model
-        # experiment(binary_occurrences_pipeline, ('clf', MultinomialNB()), "mnb+binary", X_train, Y_train, X_test, Y_test)
+            result = pred
     print("Best f1: ", best_f1)
-    Y_pred_test = best_model.predict(test_data['data'])
-    output_prediction(Y_pred_test, test_data)
+    # Y_pred_test = best_model.predict(test_data['data'])       ##### FIXME: X has 71095 features per sample; expecting 70898
+    output_prediction(pred, test_data)
 
 
 
 experiment_k_fold()
 # experiment_basic_validation()
+
+
+
+
