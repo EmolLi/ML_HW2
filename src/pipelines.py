@@ -10,7 +10,7 @@ from sklearn import metrics
 import numpy as np
 from sklearn.model_selection import KFold
 import csv
-from src.classifiers import decision_tree_classifier, logistic_regression
+from src.classifiers import decision_tree_classifier, logistic_regression, svm
 
 kFold_n = 8
 
