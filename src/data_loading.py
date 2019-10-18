@@ -42,4 +42,3 @@ def load_data(path):
 
 # load processed data like this.
 # data = load_data(dev_data_path)
-

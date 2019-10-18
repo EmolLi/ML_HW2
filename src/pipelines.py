@@ -1,3 +1,6 @@
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -147,7 +150,3 @@ def randomizedSearch(params):
 experiment_basic_validation()
 
 # randomizedSearch(params)
-
-
-
-
